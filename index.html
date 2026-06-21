@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PBC AI Demo</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { 
+    font-family: Arial, sans-serif; 
+    background: #0a0a12; 
+    color: #fff; 
+    padding: 10px;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  .header { 
+    background: linear-gradient(135deg, #1a1a2e, #16213e); 
+    padding: 15px; 
+    border-radius: 12px; 
+    margin-bottom: 15px;
+    border: 1px solid #d4af37;
+  }
+  .header h1 { color: #d4af37; font-size: 20px; }
+  .header p { color: #8892b0; font-size: 12px; margin-top: 5px; }
+  .badge { 
+    display: inline-block; 
+    background: #00ff88; 
+    color: #000; 
+    padding: 3px 10px; 
+    border-radius: 10px; 
+    font-size: 11px; 
+    font-weight: bold;
+    margin-top: 8px;
+  }
+
+  .tabs { display: flex; gap: 5px; margin-bottom: 15px; overflow-x: auto; }
+  .tab { 
+    flex: 1; 
+    min-width: 70px;
+    background: #1e293b; 
+    border: none; 
+    color: #64748b; 
+    padding: 10px; 
+    border-radius: 8px; 
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: bold;
+  }
+  .tab.active { background: #d4af37; color: #000; }
+
+  .panel { display: none; background: #111827; padding: 15px; border-radius: 12px; }
+  .panel.active { display: block; }
+
+  .chat-box { background: #efeae2; border-radius: 12px; padding: 10px; height: 400px; overflow-y: auto; }
+  .msg { margin-bottom: 10px; max-width: 80%; padding: 10px; border-radius: 10px; font-size: 13px; line-height: 1.4; }
+  .msg.user { background: #d9fdd3; color: #000; margin-left: auto; border-top-right-radius: 2px; }
+  .msg.bot { background: #fff; color: #000; border-top-left-radius: 2px; }
+  .msg.bot.feature { background: #e8f4f8; border-left: 3px solid #128c7e; }
+  .feature-tag { color: #128c7e; font-size: 10px; font-weight: bold; margin-bottom: 5px; }
+  .time { font-size: 9px; color: #999; text-align: right; margin-top: 5px; }
+
+  .card { background: #1e293b; padding: 15px; border-radius: 10px; margin-bottom: 10px; }
+  .card h3 { color: #d4af37; font-size: 14px; margin-bottom: 8px; }
+  .card p { color: #94a3b8; font-size: 12px; line-height: 1.6; }
+  .price { color: #00ff88; font-size: 18px; font-weight: bold; }
+  .stock-ok { color: #00ff88; font-size: 11px; }
+  .stock-low { color: #ff4757; font-size: 11px; }
+
+  .btn { 
+    display: block; 
+    width: 100%; 
+    background: #d4af37; 
+    color: #000; 
+    border: none; 
+    padding: 15px; 
+    border-radius: 10px; 
+    font-size: 16px; 
+    font-weight: bold; 
+    cursor: pointer;
+    margin-top: 15px;
+  }
+
+  .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; }
+  .online { background: #00ff88; }
+  .busy { background: #ff4757; }
+  .offline { background: #64748b; }
+
+  .order-status { 
+    display: inline-block; 
+    padding: 3px 8px; 
+    border-radius: 10px; 
+    font-size: 10px; 
+    font-weight: bold; 
+  }
+  .delivered { background: rgba(0,255,136,0.2); color: #00ff88; }
+  .pending { background: rgba(255,193,7,0.2); color: #ffc107; }
+  .out { background: rgba(33,150,243,0.2); color: #2196f3; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .stat-box { background: #1e293b; padding: 15px; border-radius: 10px; text-align: center; }
+  .stat-box .num { color: #d4af37; font-size: 24px; font-weight: bold; }
+  .stat-box .lbl { color: #64748b; font-size: 10px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📚 Pakistan Book Centre</h1>
+  <p>AI WhatsApp Assistant v4.0 — Kotla Arab Ali Khan</p>
+  <span class="badge">● LIVE SYSTEM</span>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showPanel('whatsapp')">💬 Chat</button>
+  <button class="tab" onclick="showPanel('dashboard')">📊 Stats</button>
+  <button class="tab" onclick="showPanel('products')">📚 Products</button>
+  <button class="tab" onclick="showPanel('riders')">🛵 Riders</button>
+  <button class="tab" onclick="showPanel('orders')">📦 Orders</button>
+</div>
+
+<!-- WhatsApp Panel -->
+<div class="panel active" id="whatsapp">
+  <div class="chat-box" id="chatBox">
+    <div class="msg bot feature">
+      <div class="feature-tag">🤖 SYSTEM READY</div>
+      Assalam o Alaikum! Main Pakistan Book Centre ka AI Assistant hoon. Aapko kya chahiye?
+      <div class="time">4:30 PM</div>
+    </div>
+  </div>
+  <button class="btn" onclick="startDemo()">▶ Start Live Demo</button>
+</div>
+
+<!-- Dashboard Panel -->
+<div class="panel" id="dashboard">
+  <div class="grid-2">
+    <div class="stat-box">
+      <div class="num">Rs. 24,500</div>
+      <div class="lbl">Today's Sales</div>
+    </div>
+    <div class="stat-box">
+      <div class="num">12</div>
+      <div class="lbl">Active Orders</div>
+    </div>
+    <div class="stat-box">
+      <div class="num">50</div>
+      <div class="lbl">Total Customers</div>
+    </div>
+    <div class="stat-box">
+      <div class="num" style="color:#ff4757;">2</div>
+      <div class="lbl">Low Stock</div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:15px;">
+    <h3>📈 Weekly Performance</h3>
+    <p>Mon: Rs. 18K | Tue: Rs. 22K | Wed: Rs. 15K | Thu: Rs. 28K | Fri: Rs. 24K | Sat: Rs. 31K | Sun: Rs. 24.5K</p>
+  </div>
+</div>
+
+<!-- Products Panel -->
+<div class="panel" id="products">
+  <div class="card">
+    <h3>📘 9th Physics (Govt)</h3>
+    <p>Government prescribed textbook</p>
+    <p><span class="stock-ok">✓ 45 in stock</span></p>
+    <p>Retail: <s>Rs. 450</s> | Wholesale: <span class="price">Rs. 383</span></p>
+  </div>
+  <div class="card">
+    <h3>📗 9th Chemistry (Govt)</h3>
+    <p>Government prescribed textbook</p>
+    <p><span class="stock-ok">✓ 38 in stock</span></p>
+    <p>Retail: <s>Rs. 450</s> | Wholesale: <span class="price">Rs. 383</span></p>
+  </div>
+  <div class="card">
+    <h3>📐 9th Math (Govt)</h3>
+    <p>Government prescribed textbook</p>
+    <p><span class="stock-low">⚠ Only 12 left!</span></p>
+    <p>Retail: <s>Rs. 500</s> | Wholesale: <span class="price">Rs. 425</span></p>
+  </div>
+  <div class="card">
+    <h3>📝 A4 Register (200pg)</h3>
+    <p>Stationery item</p>
+    <p><span class="stock-ok">✓ 200 in stock</span></p>
+    <p>Retail: <s>Rs. 60</s> | Wholesale: <span class="price">Rs. 50</span></p>
+  </div>
+</div>
+
+<!-- Riders Panel -->
+<div class="panel" id="riders">
+  <div class="card">
+    <h3>🧑 Ali Khan</h3>
+    <p><span class="status-dot online"></span>Available</p>
+    <p>Area: Kotla | 📱 0321-9876543</p>
+  </div>
+  <div class="card">
+    <h3>🧑 Hassan Ahmed</h3>
+    <p><span class="status-dot busy"></span>On Delivery</p>
+    <p>Area: Kharian | 📱 0322-8765432</p>
+  </div>
+  <div class="card">
+    <h3>🧑 Usman Ali</h3>
+    <p><span class="status-dot online"></span>Available</p>
+    <p>Area: Gulyana | 📱 0323-7654321</p>
+  </div>
+  <div class="card">
+    <h3>🧑 Bilal Hassan</h3>
+    <p><span class="status-dot offline"></span>Off Duty</p>
+    <p>Area: Dolat Nagar | 📱 0324-6543210</p>
+  </div>
+</div>
+
+<!-- Orders Panel -->
+<div class="panel" id="orders">
+  <div class="card">
+    <h3>Order #PBC-240621-001 <span class="order-status out">🚚 Out for Delivery</span></h3>
+    <p>Customer: Al-Falah School (Wholesale)</p>
+    <p>Items: 2x 9th Science Sets + 10x Registers</p>
+    <p>Rider: Hassan Ahmed | ETA: 25 min</p>
+    <p class="price">Total: Rs. 3,648</p>
+  </div>
+  <div class="card">
+    <h3>Order #PBC-240621-002 <span class="order-status pending">⏳ Processing</span></h3>
+    <p>Customer: Bright Academy (School)</p>
+    <p>Items: 5x 10th Class Complete Sets</p>
+    <p>Payment: Pending | Rider: Assigning...</p>
+    <p class="price">Total: Rs. 8,750</p>
+  </div>
+  <div class="card">
+    <h3>Order #PBC-240621-003 <span class="order-status delivered">✅ Delivered</span></h3>
+    <p>Customer: Khan General Store (Retailer)</p>
+    <p>Items: 20x Registers + 15x Pens</p>
+    <p>Rider: Ali Khan | Delivered: 3:45 PM</p>
+    <p class="price">Total: Rs. 1,850</p>
+  </div>
+</div>
+
+<script>
+function showPanel(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+const DEMO = [
+  { from: 'user', text: 'Assalam o Alaikum, 9th class ki government books chahiye', delay: 1000 },
+  { from: 'bot', text: 'FEATURE 1: Auto Customer ID\\n\\nWalaikum Assalam!\\nNumber: +92-300-1234567\\nName: Muhammad Ahmad\\nSchool: Al-Falah Public School\\nCategory: Wholesale (15% Discount)\\nArea: Kharian (Rider: Hassan)', delay: 2000, feature: true },
+  { from: 'user', text: '9th Science complete set kitne ka hai?', delay: 1500 },
+  { from: 'bot', text: 'FEATURE 2: Smart Pricing\\n\\n9th Science Set:\\nPhysics: Rs. 450 → Rs. 383\\nChemistry: Rs. 450 → Rs. 383\\nBiology: Rs. 450 → Rs. 383\\nMath: Rs. 500 → Rs. 425\\n\\nTotal: Rs. 1,574 (Saved: Rs. 276)', delay: 2500, feature: true },
+  { from: 'bot', text: 'FEATURE 3: Stock + Rider\\n\\nStock: 45 sets available\\nRider: Hassan (Kharian)\\nETA: 30-40 minutes', delay: 2000, feature: true },
+  { from: 'user', text: 'Theek hai 2 sets bhej do, aur 10 registers', delay: 1500 },
+  { from: 'bot', text: 'FEATURE 4: Order + Payment\\n\\nOrder:\\n• 2x Science Sets: Rs. 3,148\\n• 10x Registers: Rs. 500\\nTotal: Rs. 3,648\\n\\nPayment:\\n1. JazzCash\\n2. EasyPaisa\\n3. Cash on Delivery', delay: 2500, feature: true },
+  { from: 'user', text: 'JazzCash se kar deta hoon', delay: 1000 },
+  { from: 'bot', text: 'FEATURE 5: Payment + Tracking\\n\\n✅ JazzCash Received: Rs. 3,648\\nTransaction: JZ-240621-001\\n\\nOrder #PBC-240621-001 CONFIRMED!\\nRider: Hassan dispatched\\nTrack: bit.ly/pbc-track\\nExpected: 5:10 PM', delay: 2500, feature: true },
+  { from: 'bot', text: 'FEATURE 6: Multi-Language + Analytics\\n\\nLanguages: Urdu/English/Punjabi\\nMonthly Spending: Rs. 12,450\\nTop Category: Science (65%)\\nLoyalty Points: 340', delay: 2000, feature: true },
+  { from: 'user', text: 'Shukriya bhai, bohat asaan system hai!', delay: 1000 },
+  { from: 'bot', text: 'FEATURE 7: Feedback & Loyalty\\n\\n⭐⭐⭐⭐⭐ Excellent!\\nSentiment: Positive (+5 points)\\nNext Order: 5% Extra Discount\\n\\nAllah hafiz! 🙏', delay: 2000, feature: true }
+];
+
+let demoTimeouts = [];
+let isRunning = false;
+
+function startDemo() {
+  if (isRunning) {
+    demoTimeouts.forEach(clearTimeout);
+    isRunning = false;
+    document.querySelector('.btn').textContent = '▶ Start Live Demo';
+    return;
+  }
+  
+  isRunning = true;
+  document.querySelector('.btn').textContent = '⏳ Demo Running...';
+  
+  const chat = document.getElementById('chatBox');
+  chat.innerHTML = '';
+  
+  let time = 0;
+  DEMO.forEach((msg, i) => {
+    time += msg.delay;
+    
+    demoTimeouts.push(setTimeout(() => {
+      const div = document.createElement('div');
+      div.className = 'msg ' + msg.from + (msg.feature ? ' feature' : '');
+      
+      let content = msg.text;
+      if (msg.feature) {
+        const lines = msg.text.split('\\n');
+        content = '<div class="feature-tag">' + lines[0] + '</div>' + lines.slice(1).join('<br>');
+      }
+      
+      div.innerHTML = content + '<div class="time">4:' + (30 + i) + ' PM</div>';
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+      
+      if (i === DEMO.length - 1) {
+        isRunning = false;
+        document.querySelector('.btn').textContent = '↻ Restart Demo';
+      }
+    }, time));
+  });
+}
+</script>
+
+</body>
+</html>
+
